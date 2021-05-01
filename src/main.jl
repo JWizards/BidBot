@@ -70,7 +70,7 @@ end
 
 function start_bot_mine()
 
-	c = Client(ENV["BBOT_TOKEN"];  presence=(game=(name="nothing", type=AT_GAME),), prefix = '$')
+	c = Client(ENV["BBOT_TOKEN"];  presence=(game=(name="nothing", type=AT_GAME),), prefix = '!')
 
 
 	add_command!(c, :echo, (c, m) -> reply(c, m, m.content); help="repeat a message")

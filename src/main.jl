@@ -62,13 +62,10 @@ function bid_conclude(c::Client, m::Message)
 	winBid = maximum(values(game))
 	winners = [x for (x,y) in game if y == winBid]
 	
+	
+	reply(c,m,"The winner(s) are $(winners...)\n\nThe bid(s) are ```$(prettyP_D(sort_dict(game)))```")
 	delete!(GAMES,m.channel_id)
-	
-	return reply(c,m,"The winner(s) are $(winners...)")
-	
 end
-	
-
 
 
 function start_bot_mine()
@@ -79,6 +76,7 @@ function start_bot_mine()
 	add_command!(c, :echo, (c, m) -> reply(c, m, m.content); help="repeat a message")
 	add_command!(c, :bid, bid_channel)
 	add_command!(c, :fin, bid_conclude)
+	add_command!(c, :halt, halt)
 	
 	# Log in to the Discord gateway.
 	open(c)

@@ -7,3 +7,13 @@ function strip_spoiler(s::AbstractString)
 	 return outRaw[2]
 	end
 end
+
+function prettyP_D(d::Dict)
+		S = ""
+		for (k,v) in d
+			S = S*"$(k): $(v)\n"
+		end
+		return S
+end
+
+sort_dict(d::Dict) = Dict(sort(collect(d), by=x->x[2]))

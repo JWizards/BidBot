@@ -63,20 +63,20 @@ function bid_conclude(c::Client, m::Message)
 	winners = [x for (x,y) in game if y == winBid]
 	
 	
-	reply(c,m,"The winner(s) are $(winners...)\n\nThe bid(s) are ```$(prettyP_D(sort_dict(game)))```")
+	reply(c,m,"The winner is $(winners[rand(1:end)])\n\nThe bid(s) are ```$(prettyP_D(sort_dict(game)))```")
 	delete!(GAMES,m.channel_id)
 end
 
 
 function start_bot_mine()
 
-	c = Client(ENV["BBOT_TOKEN"];  presence=(game=(name="nothing", type=AT_GAME),), prefix = '!')
+	c = Client(ENV["BBOT_TOKEN"];  presence=(game=(name="nothing", type=AT_GAME),), prefix = '$')
 
 
 	add_command!(c, :echo, (c, m) -> reply(c, m, m.content); help="repeat a message")
 	add_command!(c, :bid, bid_channel)
 	add_command!(c, :fin, bid_conclude)
-	add_command!(c, :halt, halt)
+	#add_command!(c, :halt, halt) #COMMENT THIS
 	
 	# Log in to the Discord gateway.
 	open(c)

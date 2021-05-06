@@ -3,7 +3,7 @@
 
 
 const GAMES = Dict{Discord.Snowflake, Dict{String, UInt}}()
-
+const TRACKS = Dict{Discord.Snowflake, Dict{String, UInt}}()
 
 function bid_channel(c::Client, m::Message)
 	
@@ -47,7 +47,7 @@ function bid_channel(c::Client, m::Message)
 	end
 	
 	game[pChar * " "] = bid
-	
+
 	delete(c,m)
 	
 end
@@ -67,6 +67,48 @@ function bid_conclude(c::Client, m::Message)
 	delete!(GAMES,m.channel_id)
 end
 
+function track(c::Client, m::Message)
+
+	words = split(m.content)
+	if length(words) > 3
+        return reply(c, m, "Invalid !track command.")
+    end
+	
+	if length(words) == 3
+		pChar = words[3] * " "
+	else
+		pChar = m.author.username * " "
+	end
+	
+	if !haskey(TRACKS,m.channel_id)
+		TRACKS[m.channel_id] = Dict()
+	end
+	trackList = TRACKS[m.channel_id]
+	
+	if !haskey(trackList,pChar)
+		trackList[pChar] = 0
+	end
+	
+	if words[2] == "view"
+		return reply(c,m, "$(pChar)has $(trackList[pChar]) IP")
+	end
+	
+	trackAdd = try
+	     parse(Int, words[2])
+	catch
+		 return reply(c,m, " Either '$(words[2])' is an invalid amount or you meant to use !track view")
+	end
+	
+	trackList[pChar] += trackAdd
+	return reply(c,m, "Added $(trackAdd) to $(pChar)!")
+end
+
+function halt(c::Client, m::Message)
+	println("Closing!!")
+	reply(c,m,"Closing!!")
+	close(c)
+end
+
 
 function start_bot_mine()
 
@@ -76,6 +118,7 @@ function start_bot_mine()
 	add_command!(c, :echo, (c, m) -> reply(c, m, m.content); help="repeat a message")
 	add_command!(c, :bid, bid_channel)
 	add_command!(c, :fin, bid_conclude)
+	add_command!(c, :track, track)
 	#add_command!(c, :halt, halt) #COMMENT THIS
 	
 	# Log in to the Discord gateway.
